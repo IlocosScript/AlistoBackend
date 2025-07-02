@@ -19,11 +19,11 @@ builder.Services.AddDbContext<Alisto.Api.Data.AlistoDbContext>(options =>
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.Authority = "https://clerk.your-domain.com"; // or https://api.clerk.dev if using Clerk-hosted
+        options.Authority = "https://settling-ant-32.clerk.accounts.dev";// builder.Configuration["JwtSettings:Issuer"];//"https://settling-ant-32.clerk.accounts.dev"; // or https://api.clerk.dev if using Clerk-hosted
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = builder.Configuration["JwtSettings:Issuer"], // Set your issuer here
+            ValidIssuer ="https://settling-ant-32.clerk.accounts.dev",// builder.Configuration["JwtSettings:Issuer"], // Set your issuer here
             ValidateAudience = false, // or set to true if you want to validate against a specific audience
             ValidateLifetime = true
         };
