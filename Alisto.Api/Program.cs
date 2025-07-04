@@ -15,20 +15,20 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddDbContext<Alisto.Api.Data.AlistoDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DB") ) .ConfigureWarnings(warnings =>
                     warnings.Ignore(RelationalEventId.PendingModelChangesWarning)));
-
+ string JwtIssuer=builder.Configuration["JwtSettings:Issuer"]??""; // Replace with your actual issuer
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.Authority = "https://settling-ant-32.clerk.accounts.dev";// builder.Configuration["JwtSettings:Issuer"];//"https://settling-ant-32.clerk.accounts.dev"; // or https://api.clerk.dev if using Clerk-hosted
+        options.Authority = JwtIssuer;//"https://settling-ant-32.clerk.accounts.dev"; // or https://api.clerk.dev if using Clerk-hosted
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer ="https://settling-ant-32.clerk.accounts.dev",// builder.Configuration["JwtSettings:Issuer"], // Set your issuer here
+          //  ValidIssuer ="https://settling-ant-32.clerk.accounts.dev",// builder.Configuration["JwtSettings:Issuer"], // Set your issuer here
             ValidateAudience = false, // or set to true if you want to validate against a specific audience
             ValidateLifetime = true
         };
     });
-
+builder.Services.AddAuthorization();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
