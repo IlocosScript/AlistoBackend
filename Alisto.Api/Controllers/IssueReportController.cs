@@ -249,7 +249,6 @@ namespace Alisto.Api.Controllers
 
         // PUT: api/issuereport/{id}
         [HttpPut("{id}")]
-        [Authorize]
         public async Task<IActionResult> UpdateIssueReport(string id, [FromBody] CreateIssueReportRequest request)
         {
             try
@@ -318,7 +317,6 @@ namespace Alisto.Api.Controllers
 
         // DELETE: api/issuereport/{id}
         [HttpDelete("{id}")]
-        [Authorize]
         public async Task<IActionResult> DeleteIssueReport(string id)
         {
             try
@@ -357,7 +355,6 @@ namespace Alisto.Api.Controllers
 
         // PATCH: api/issuereport/{id}/status
         [HttpPatch("{id}/status")]
-        [Authorize]
         public async Task<IActionResult> UpdateIssueStatus(string id, [FromBody] UpdateIssueStatusRequest request)
         {
             try

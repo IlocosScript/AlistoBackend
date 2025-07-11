@@ -22,7 +22,6 @@ namespace Alisto.Api.Controllers
 
         // GET: api/user
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> GetUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
             try
@@ -82,7 +81,6 @@ namespace Alisto.Api.Controllers
 
         // GET: api/user/{id}
         [HttpGet("{id}")]
-        [Authorize]
         public async Task<IActionResult> GetUser(string id)
         {
             try
@@ -356,7 +354,6 @@ namespace Alisto.Api.Controllers
 
         // PUT: api/user/{id}
         [HttpPut("{id}")]
-        [Authorize]
         public async Task<IActionResult> UpdateUser(string id, [FromBody] UpdateUserRequest request)
         {
             try
@@ -427,7 +424,6 @@ namespace Alisto.Api.Controllers
 
         // DELETE: api/user/{id}
         [HttpDelete("{id}")]
-        [Authorize]
         public async Task<IActionResult> DeleteUser(string id)
         {
             try
@@ -543,7 +539,6 @@ namespace Alisto.Api.Controllers
 
         // PATCH: api/user/{id}/activate
         [HttpPatch("{id}/activate")]
-        [Authorize]
         public async Task<IActionResult> ActivateUser(string id)
         {
             try

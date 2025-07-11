@@ -165,7 +165,6 @@ namespace Alisto.Api.Controllers
 
         // POST: api/news
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> CreateNewsArticle([FromBody] CreateNewsRequest request)
         {
             try
@@ -233,7 +232,6 @@ namespace Alisto.Api.Controllers
 
         // PUT: api/news/{id}
         [HttpPut("{id}")]
-        [Authorize]
         public async Task<IActionResult> UpdateNewsArticle(int id, [FromBody] CreateNewsRequest request)
         {
             try
@@ -307,7 +305,6 @@ namespace Alisto.Api.Controllers
 
         // DELETE: api/news/{id}
         [HttpDelete("{id}")]
-        [Authorize]
         public async Task<IActionResult> DeleteNewsArticle(int id)
         {
             try
@@ -346,7 +343,6 @@ namespace Alisto.Api.Controllers
 
         // PATCH: api/news/{id}/publish
         [HttpPatch("{id}/publish")]
-        [Authorize]
         public async Task<IActionResult> PublishNewsArticle(int id)
         {
             try

@@ -23,7 +23,6 @@ namespace Alisto.Api.Controllers
 
         // GET: api/appointment
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> GetAppointments([FromQuery] int page = 1, [FromQuery] int pageSize = 10,
             [FromQuery] string? status = null, [FromQuery] string? paymentStatus = null, [FromQuery] string? userId = null)
         {
@@ -109,7 +108,6 @@ namespace Alisto.Api.Controllers
 
         // GET: api/appointment/{id}
         [HttpGet("{id}")]
-        [Authorize]
         public async Task<IActionResult> GetAppointment(string id)
         {
             try
@@ -167,7 +165,6 @@ namespace Alisto.Api.Controllers
 
         // POST: api/appointment
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentRequest request)
         {
             try
@@ -250,7 +247,6 @@ namespace Alisto.Api.Controllers
 
         // PUT: api/appointment/{id}
         [HttpPut("{id}")]
-        [Authorize]
         public async Task<IActionResult> UpdateAppointment(string id, [FromBody] CreateAppointmentRequest request)
         {
             try
@@ -331,7 +327,6 @@ namespace Alisto.Api.Controllers
 
         // DELETE: api/appointment/{id}
         [HttpDelete("{id}")]
-        [Authorize]
         public async Task<IActionResult> CancelAppointment(string id)
         {
             try
@@ -383,7 +378,6 @@ namespace Alisto.Api.Controllers
 
         // PATCH: api/appointment/{id}/status
         [HttpPatch("{id}/status")]
-        [Authorize]
         public async Task<IActionResult> UpdateAppointmentStatus(string id, [FromBody] UpdateAppointmentStatusRequest request)
         {
             try
