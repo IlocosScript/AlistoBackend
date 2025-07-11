@@ -1,0 +1,100 @@
+name: Validate API Response Rules
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'Alisto.Api/Controllers/**'
+      - 'Alisto.Api/DTO/**'
+      - 'scripts/validate-api-response-rules.ps1'
+      - '.github/workflows/validate-api-response-rules.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'Alisto.Api/Controllers/**'
+      - 'Alisto.Api/DTO/**'
+      - 'scripts/validate-api-response-rules.ps1'
+      - '.github/workflows/validate-api-response-rules.yml'
+
+jobs:
+  validate-api-rules:
+    name: Validate API Response Rules
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup PowerShell
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Make script executable
+      run: chmod +x scripts/validate-api-response-rules.ps1
+      
+    - name: Run API Response Rules Validation
+      run: |
+        pwsh -File scripts/validate-api-response-rules.ps1 -ProjectPath "Alisto.Api"
+        
+    - name: Upload validation report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: api-response-validation-report
+        path: |
+          scripts/validate-api-response-rules.ps1
+          API_RESPONSE_RULES.md
+        retention-days: 30
+        
+    - name: Comment on PR
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          
+          // Check if validation passed
+          if (process.env.VALIDATION_EXIT_CODE === '0') {
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `✅ **API Response Rules Validation Passed**
+              
+              All API endpoints are compliant with the standardized \`ApiResponse<T>\` format.
+              
+              📋 **Validation Details:**
+              - ✅ All controller methods return \`IActionResult\`
+              - ✅ All responses are wrapped in \`ApiResponse<T>\`
+              - ✅ Proper error handling with try-catch blocks
+              - ✅ Consistent success/error message format
+              
+              🎉 Great job maintaining API consistency!`
+            });
+          } else {
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `❌ **API Response Rules Validation Failed**
+              
+              Some API endpoints are not compliant with the standardized \`ApiResponse<T>\` format.
+              
+              📋 **Required Actions:**
+              1. Review the validation output above
+              2. Fix any violations in controller methods
+              3. Ensure all responses follow the \`ApiResponse<T>\` pattern
+              4. Re-run validation after fixes
+              
+              📖 **Reference:** See \`API_RESPONSE_RULES.md\` for detailed guidelines.
+              
+              🔧 **Common Issues:**
+              - Direct returns without \`ApiResponse<T>\` wrapper
+              - Missing try-catch blocks
+              - Inconsistent error handling
+              - Missing pagination headers in list endpoints`
+            });
+          }
+      env:
+        VALIDATION_EXIT_CODE: ${{ steps.validate.outputs.exit-code }} 
