@@ -6,121 +6,7 @@
     "_postman_id": "alisto-backend-api-collection"
   },
   "item": [
-    {
-      "name": "🔐 Authentication",
-      "item": [
-        {
-          "name": "Login",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"deviceInfo\": \"Postman/1.0\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/auth/login",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "login"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Register",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"confirmPassword\": \"{{password}}\",\n  \"firstName\": \"{{firstName}}\",\n  \"lastName\": \"{{lastName}}\",\n  \"middleName\": \"{{middleName}}\",\n  \"phoneNumber\": \"{{phoneNumber}}\",\n  \"address\": \"{{address}}\",\n  \"dateOfBirth\": \"{{dateOfBirth}}\",\n  \"emergencyContactName\": \"{{emergencyContactName}}\",\n  \"emergencyContactNumber\": \"{{emergencyContactNumber}}\",\n  \"deviceInfo\": \"Postman/1.0\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/auth/register",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "register"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Logout",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Authorization",
-                "value": "Bearer {{accessToken}}"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"sessionId\": \"{{sessionId}}\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/auth/logout",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "logout"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Refresh Token",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"sessionId\": \"{{sessionId}}\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/auth/refresh",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "refresh"]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "Get Current User",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{accessToken}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/auth/me",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "auth", "me"]
-            }
-          },
-          "response": []
-        }
-      ]
-    },
+
     {
       "name": "👤 User Management",
       "item": [
@@ -173,7 +59,20 @@
           "response": []
         },
         {
-          "name": "Create User",
+          "name": "Get User by External ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/user/external/{{externalId}}/{{authProvider}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "user", "external", "{{externalId}}", "{{authProvider}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create User from Auth",
           "request": {
             "method": "POST",
             "header": [
@@ -184,16 +83,39 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"{{email}}\",\n  \"password\": \"{{password}}\",\n  \"confirmPassword\": \"{{password}}\",\n  \"firstName\": \"{{firstName}}\",\n  \"lastName\": \"{{lastName}}\",\n  \"middleName\": \"{{middleName}}\",\n  \"phoneNumber\": \"{{phoneNumber}}\",\n  \"address\": \"{{address}}\",\n  \"dateOfBirth\": \"{{dateOfBirth}}\",\n  \"emergencyContactName\": \"{{emergencyContactName}}\",\n  \"emergencyContactNumber\": \"{{emergencyContactNumber}}\"\n}"
+              "raw": "{\n  \"externalId\": \"{{externalId}}\",\n  \"authProvider\": \"{{authProvider}}\",\n  \"email\": \"{{email}}\",\n  \"firstName\": \"{{firstName}}\",\n  \"lastName\": \"{{lastName}}\",\n  \"middleName\": \"{{middleName}}\",\n  \"phoneNumber\": \"{{phoneNumber}}\",\n  \"address\": \"{{address}}\",\n  \"dateOfBirth\": \"{{dateOfBirth}}\",\n  \"profileImageUrl\": \"{{profileImageUrl}}\",\n  \"emergencyContactName\": \"{{emergencyContactName}}\",\n  \"emergencyContactNumber\": \"{{emergencyContactNumber}}\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/user",
+              "raw": "{{baseUrl}}/api/user/from-auth",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "user"]
+              "path": ["api", "user", "from-auth"]
             }
           },
           "response": []
         },
+        {
+          "name": "Sync User from Auth",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"externalId\": \"{{externalId}}\",\n  \"authProvider\": \"{{authProvider}}\",\n  \"email\": \"{{email}}\",\n  \"firstName\": \"{{firstName}}\",\n  \"lastName\": \"{{lastName}}\",\n  \"middleName\": \"{{middleName}}\",\n  \"phoneNumber\": \"{{phoneNumber}}\",\n  \"address\": \"{{address}}\",\n  \"dateOfBirth\": \"{{dateOfBirth}}\",\n  \"profileImageUrl\": \"{{profileImageUrl}}\",\n  \"emergencyContactName\": \"{{emergencyContactName}}\",\n  \"emergencyContactNumber\": \"{{emergencyContactNumber}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/user/sync-from-auth",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "user", "sync-from-auth"]
+            }
+          },
+          "response": []
+        },
+
         {
           "name": "Update User",
           "request": {

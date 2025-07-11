@@ -1,11 +1,40 @@
 // User-related types for user management endpoints
 
 import { ApiResponse, PaginatedResponse, PaginationRequest } from './common';
-import { UserDto } from './auth';
 
 // ============================================================================
 // REQUEST TYPES
 // ============================================================================
+
+export interface CreateUserFromAuthRequest {
+  externalId: string;
+  authProvider: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  middleName?: string;
+  phoneNumber?: string;
+  address?: string;
+  dateOfBirth?: string; // ISO date string
+  profileImageUrl?: string;
+  emergencyContactName?: string;
+  emergencyContactNumber?: string;
+}
+
+export interface SyncUserFromAuthRequest {
+  externalId: string;
+  authProvider: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  middleName?: string;
+  phoneNumber?: string;
+  address?: string;
+  dateOfBirth?: string; // ISO date string
+  profileImageUrl?: string;
+  emergencyContactName?: string;
+  emergencyContactNumber?: string;
+}
 
 export interface UpdateUserRequest {
   firstName?: string;
@@ -23,7 +52,24 @@ export interface UpdateUserRequest {
 // RESPONSE TYPES
 // ============================================================================
 
-// UserDto is already defined in auth.ts and imported above
+export interface UserDto {
+  id: string;
+  externalId?: string; // ID from third-party auth provider
+  authProvider?: string; // e.g., "Google", "Microsoft", "Custom"
+  email: string;
+  firstName: string;
+  lastName: string;
+  middleName?: string;
+  phoneNumber: string;
+  address: string;
+  dateOfBirth?: string; // ISO date string
+  isActive: boolean;
+  createdAt: string; // ISO date string
+  lastLoginAt?: string; // ISO date string
+  profileImageUrl?: string;
+  emergencyContactName?: string;
+  emergencyContactNumber?: string;
+}
 
 // ============================================================================
 // API RESPONSE TYPES

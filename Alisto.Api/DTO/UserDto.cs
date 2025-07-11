@@ -5,6 +5,8 @@ namespace Alisto.Api.DTOs
     public class UserDto
     {
         public string Id { get; set; }
+        public string? ExternalId { get; set; } // ID from third-party auth provider
+        public string? AuthProvider { get; set; } // e.g., "Google", "Microsoft", "Custom"
         public string Email { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Alisto.Api.Enums;
 
 namespace Alisto.Api.DTOs
 {
@@ -29,7 +30,7 @@ namespace Alisto.Api.DTOs
         public string? ExpectedAttendees { get; set; }
 
         [Required]
-        public string Category { get; set; }
+        public NewsCategory Category { get; set; }
 
         [Required]
         public string Author { get; set; }

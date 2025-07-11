@@ -99,9 +99,9 @@ namespace Alisto.Api.Controllers
                     Message = $"Retrieved {issueReports.Count} issue reports successfully"
                 };
 
-                Response.Headers.Add("X-Total-Count", totalCount.ToString());
-                Response.Headers.Add("X-Total-Pages", totalPages.ToString());
-                Response.Headers.Add("X-Current-Page", page.ToString());
+                Response.Headers["X-Total-Count"] = totalCount.ToString();
+                Response.Headers["X-Total-Pages"] = totalPages.ToString();
+                Response.Headers["X-Current-Page"] = page.ToString();
 
                 return Ok(response);
             }
@@ -408,7 +408,7 @@ namespace Alisto.Api.Controllers
 
         // GET: api/issuereport/categories
         [HttpGet("categories")]
-        public async Task<IActionResult> GetIssueCategories()
+        public IActionResult GetIssueCategories()
         {
             try
             {
@@ -437,7 +437,7 @@ namespace Alisto.Api.Controllers
 
         // GET: api/issuereport/statuses
         [HttpGet("statuses")]
-        public async Task<IActionResult> GetIssueStatuses()
+        public IActionResult GetIssueStatuses()
         {
             try
             {

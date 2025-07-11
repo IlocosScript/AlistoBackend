@@ -8,7 +8,6 @@ This directory contains TypeScript type definitions for the Alisto Backend API, 
 types/
 ├── index.ts              # Main export file
 ├── common.ts             # Shared types and enums
-├── auth.ts               # Authentication endpoints
 ├── user.ts               # User management endpoints
 ├── appointment.ts        # Appointment management endpoints
 ├── issue-report.ts       # Issue reporting endpoints
@@ -29,7 +28,7 @@ import * as AlistoTypes from './types';
 ### Import Specific Types
 ```typescript
 import { 
-  LoginRequest, 
+  UserDto, 
   AppointmentDto, 
   ApiResponse 
 } from './types';
@@ -37,16 +36,13 @@ import {
 
 ### Import by Category
 ```typescript
-import { LoginRequest, AuthResponse } from './types/auth';
+import { UserDto, UpdateUserRequest } from './types/user';
 import { AppointmentDto, CreateAppointmentRequest } from './types/appointment';
 ```
 
 ## 📋 Type Categories
 
-### 🔐 Authentication (`auth.ts`)
-- **Endpoints**: `/api/auth/*`
-- **Types**: Login, Register, Token refresh
-- **Key Types**: `LoginRequest`, `RegisterRequest`, `AuthResponse`
+
 
 ### 👤 User Management (`user.ts`)
 - **Endpoints**: `/api/user/*`
@@ -106,17 +102,19 @@ import { AppointmentDto, CreateAppointmentRequest } from './types/appointment';
 
 ### API Call with Types
 ```typescript
-import { LoginRequest, LoginResponse } from './types';
+import { CreateAppointmentRequest, AppointmentDto } from './types';
 
-const loginData: LoginRequest = {
-  email: 'user@example.com',
-  password: 'password123'
+const appointmentData: CreateAppointmentRequest = {
+  serviceId: 1,
+  appointmentDate: '2024-12-15',
+  appointmentTime: '09:00',
+  notes: 'Test appointment'
 };
 
-const response: LoginResponse = await fetch('/api/auth/login', {
+const response: ApiResponse<AppointmentDto> = await fetch('/api/appointment', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(loginData)
+  body: JSON.stringify(appointmentData)
 });
 ```
 

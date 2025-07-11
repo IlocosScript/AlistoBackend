@@ -20,6 +20,12 @@ namespace Alisto.Api.Models
         [MaxLength(500)]
         public string FilePath { get; set; }
 
+        [MaxLength(500)]
+        public string? PhotoUrl { get; set; }
+
+        [MaxLength(255)]
+        public string? Caption { get; set; }
+
         public long FileSize { get; set; }
 
         [Required]

@@ -12,5 +12,6 @@ namespace Alisto.Api.DTOs
         public DateTime? DateOfBirth { get; set; }
         public string? EmergencyContactName { get; set; }
         public string? EmergencyContactNumber { get; set; }
+        public string? ProfileImageUrl { get; set; }
     }
 }

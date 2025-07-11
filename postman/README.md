@@ -30,17 +30,14 @@ This directory contains a comprehensive Postman collection for testing the Alist
 
 ## 📋 Collection Structure
 
-### 🔐 Authentication
-- **Login** - Authenticate user and get tokens
-- **Register** - Create new user account
-- **Logout** - End user session
-- **Refresh Token** - Renew access token
-- **Get Current User** - Get authenticated user info
+
 
 ### 👤 User Management
 - **Get Users** - List all users (paginated)
 - **Get User by ID** - Get specific user details
-- **Create User** - Register new user
+- **Get User by External ID** - Get user by third-party auth provider ID
+- **Create User from Auth** - Create/link user from third-party auth
+- **Sync User from Auth** - Sync user data from third-party auth
 - **Update User** - Modify user information
 - **Delete User** - Remove user account
 - **Activate User** - Reactivate user account
@@ -88,19 +85,17 @@ This directory contains a comprehensive Postman collection for testing the Alist
 
 ## 🔧 Environment Variables
 
-### Authentication Variables
-- `accessToken` - JWT access token (auto-populated)
-- `sessionId` - User session ID (auto-populated)
-- `userId` - Current user ID (auto-populated)
+
 
 ### User Variables
 - `email` - User email for testing
-- `password` - User password for testing
 - `firstName`, `lastName`, `middleName` - User names
 - `phoneNumber` - Contact number
 - `address` - User address
 - `dateOfBirth` - Birth date
 - `emergencyContactName`, `emergencyContactNumber` - Emergency contact
+- `externalId` - Third-party auth provider user ID
+- `authProvider` - Third-party auth provider name (e.g., "Google", "Microsoft")
 
 ### Appointment Variables
 - `appointmentId` - Appointment ID for testing
@@ -150,27 +145,29 @@ When `autoSetDates` is enabled, the collection automatically sets:
 
 ## 🧪 Testing Workflow
 
-### 1. Authentication Flow
-1. Run **Login** or **Register** request
-2. Tokens are automatically extracted and stored
-3. Subsequent requests will use the stored tokens
 
-### 2. User Management Flow
-1. Create a user with **Create User**
-2. Use the returned user ID for other operations
-3. Test update and delete operations
 
-### 3. Appointment Flow
+### 1. User Management Flow
+1. **Third-party Auth Integration**:
+   - Use **Create User from Auth** to create/link users from external auth
+   - Use **Get User by External ID** to retrieve users by auth provider ID
+   - Use **Sync User from Auth** to update user data from auth provider
+2. **Standard Operations**:
+   - Get existing users with **Get Users**
+   - Use a user ID for other operations
+   - Test update and delete operations
+
+### 2. Appointment Flow
 1. Create an appointment with **Create Appointment**
 2. Use the returned appointment ID for status updates
 3. Test different appointment statuses
 
-### 4. Issue Report Flow
+### 3. Issue Report Flow
 1. Create an issue report with **Create Issue Report**
 2. Use the returned issue ID for updates
 3. Test status changes and assignments
 
-### 5. News Flow
+### 4. News Flow
 1. Create a news article with **Create News Article**
 2. Test publishing and updating
 3. Verify public access to published articles
@@ -179,9 +176,7 @@ When `autoSetDates` is enabled, the collection automatically sets:
 
 ### Sensitive Variables
 The following variables are marked as "secret" and will be hidden in Postman:
-- `accessToken`
-- `sessionId`
-- `password`
+- `password` (if used for testing)
 
 ### Environment Switching
 Create multiple environments for different stages:

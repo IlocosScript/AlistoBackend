@@ -85,9 +85,9 @@ namespace Alisto.Api.Controllers
                     Message = $"Retrieved {news.Count} news articles successfully"
                 };
 
-                Response.Headers.Add("X-Total-Count", totalCount.ToString());
-                Response.Headers.Add("X-Total-Pages", totalPages.ToString());
-                Response.Headers.Add("X-Current-Page", page.ToString());
+                Response.Headers["X-Total-Count"] = totalCount.ToString();
+                Response.Headers["X-Total-Pages"] = totalPages.ToString();
+                Response.Headers["X-Current-Page"] = page.ToString();
 
                 return Ok(response);
             }
