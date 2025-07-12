@@ -1,16 +1,9 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json;
 
-namespace Alisto.Api.Models
+namespace Alisto.Api.DTOs
 {
-    public class TouristSpot
+    public class UpdateTouristSpotRequest
     {
-        [Key]
-        public int Id { get; set; }
-
         [Required]
         [MaxLength(200)]
         public string Name { get; set; }
@@ -22,7 +15,6 @@ namespace Alisto.Api.Models
         [MaxLength(500)]
         public string ImageUrl { get; set; }
 
-        [Column(TypeName = "decimal(3,2)")]
         public decimal Rating { get; set; } = 5.0m;
 
         [Required]
@@ -42,26 +34,11 @@ namespace Alisto.Api.Models
         [MaxLength(100)]
         public string? EntryFee { get; set; }
 
-        [Column(TypeName = "json")]
-        public string Highlights { get; set; } = "[]";
+        public List<string> Highlights { get; set; } = new List<string>();
 
         [MaxLength(100)]
         public string? TravelTime { get; set; }
 
         public bool IsActive { get; set; } = true;
-
-        public int ViewCount { get; set; } = 0;
-
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
-
-        // Helper methods for Highlights
-        [NotMapped]
-        public List<string> HighlightsList
-        {
-            get => JsonSerializer.Deserialize<List<string>>(Highlights) ?? new List<string>();
-            set => Highlights = JsonSerializer.Serialize(value);
-        }
     }
-}
+} 

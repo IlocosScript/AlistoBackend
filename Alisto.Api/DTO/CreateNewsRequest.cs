@@ -10,19 +10,16 @@ namespace Alisto.Api.DTOs
         [Required]
         public string Title { get; set; }
 
-        [Required]
-        public string Summary { get; set; }
+        public string? Summary { get; set; }
 
         [Required]
         public string FullContent { get; set; }
 
-        [Required]
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
 
-        public DateTime PublishedDate { get; set; }
+        public DateTime? PublishedDate { get; set; }
 
-        [Required]
-        public string PublishedTime { get; set; }
+        public string? PublishedTime { get; set; }
 
         [Required]
         public string Location { get; set; }
@@ -37,8 +34,10 @@ namespace Alisto.Api.DTOs
 
         public List<string> Tags { get; set; } = new List<string>();
 
+        [Required]
         public bool IsFeatured { get; set; }
 
+        [Required]
         public bool IsTrending { get; set; }
     }
 }

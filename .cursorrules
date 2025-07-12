@@ -1,0 +1,38 @@
+# Alisto Backend - Cursor Rules
+
+## Project Context
+This is an ASP.NET Core backend API for a city management system. The project uses Entity Framework Core, PostgreSQL, and follows specific patterns.
+
+## Critical Rules
+1. **NEVER upgrade or downgrade .NET SDK, runtime, or NuGet package versions without explicit user approval**
+2. All code must work with the current project's .NET version and package versions
+3. Follow the API response standards defined in API_RESPONSE_RULES.md
+4. Use the standardized ApiResponse<T> format for all endpoints
+
+## Code Patterns
+- Use PascalCase for C# properties and methods
+- Use camelCase for TypeScript/JavaScript
+- Follow existing naming conventions in the codebase
+- Always include proper error handling and logging
+
+## File Organization
+- Models go in Models/ folder
+- DTOs go in DTO/ folder  
+- Controllers go in Controllers/ folder
+- TypeScript types go in types/ folder
+
+## Database
+- **NEVER run migrations automatically** - only suggest them
+- Always create migrations for model changes when needed
+- Use meaningful migration names
+- Test migrations before committing
+- Ask for user approval before running any migration commands
+
+## TypeScript Sync
+- Keep TypeScript types in sync with C# models
+- Update types/ folder when changing models
+
+## Security
+- Never hardcode sensitive information
+- Use configuration files for environment settings
+- Validate all user inputs 

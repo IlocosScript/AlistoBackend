@@ -45,6 +45,9 @@ bld/
 # Uncomment if you have tasks that create the project's static files in wwwroot
 #wwwroot/
 
+# Uploaded files
+uploads/
+
 # Visual Studio 2017 auto generated files
 Generated\ Files/
 
@@ -248,6 +251,13 @@ ClientBin/
 *.dbproj.schemaview
 *.jfm
 *.pfx
+
+# Google Cloud Service Account Keys
+credentials/
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
 *.publishsettings
 orleans.codegen.cs
 

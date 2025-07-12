@@ -13,6 +13,9 @@ services:
       - ASPNETCORE_URLS=http://+:7000
       - ConnectionStrings__DB=${DATABASE_URL}
       - JwtSettings__Issuer=${JWT_ISSUER}
+      - FileUpload__LocalPath=${FILE_UPLOAD_LOCAL_PATH:-uploads}
+      - FileUpload__BaseUrl=${FILE_UPLOAD_BASE_URL:-/uploads}
+      - FileUpload__MaxFileSize=${FILE_UPLOAD_MAX_FILE_SIZE:-10485760}
     ports:
       - "7000:7000"
 

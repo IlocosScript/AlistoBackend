@@ -72,7 +72,7 @@ export enum ContentStatus {
   Draft = 'Draft',
   Published = 'Published',
   Archived = 'Archived',
-  Deleted = 'Deleted'
+  Scheduled = 'Scheduled'
 }
 
 export enum SortDirection {

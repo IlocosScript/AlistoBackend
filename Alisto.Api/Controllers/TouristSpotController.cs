@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Alisto.Api.Data;
 using Alisto.Api.Models;
 using Alisto.Api.DTOs;
+using Alisto.Api.Services;
 
 namespace Alisto.Api.Controllers
 {
@@ -12,11 +13,13 @@ namespace Alisto.Api.Controllers
     {
         private readonly AlistoDbContext _context;
         private readonly ILogger<TouristSpotController> _logger;
+        private readonly ILocalFileUploadService _fileUploadService;
 
-        public TouristSpotController(AlistoDbContext context, ILogger<TouristSpotController> logger)
+        public TouristSpotController(AlistoDbContext context, ILogger<TouristSpotController> logger, ILocalFileUploadService fileUploadService)
         {
             _context = context;
             _logger = logger;
+            _fileUploadService = fileUploadService;
         }
 
         // GET: api/touristspot
@@ -202,9 +205,97 @@ namespace Alisto.Api.Controllers
             }
         }
 
+        // POST: api/touristspot/with-image
+        [HttpPost("with-image")]
+        public async Task<IActionResult> CreateTouristSpotWithImage([FromForm] CreateTouristSpotWithImageRequest request)
+        {
+            try
+            {
+                string? imageUrl = null;
+
+                // Upload image to local directory if provided
+                if (request.Image != null)
+                {
+                    try
+                    {
+                        imageUrl = await _fileUploadService.UploadFileAsync(request.Image, "tourist-spots");
+                        
+                        if (imageUrl == null)
+                        {
+                            _logger.LogWarning("Failed to upload image for tourist spot");
+                            // Continue with creation even if image upload fails
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error uploading image for tourist spot");
+                        // Continue with creation even if image upload fails
+                    }
+                }
+
+                var touristSpot = new TouristSpot
+                {
+                    Name = request.Name,
+                    Description = request.Description,
+                    ImageUrl = imageUrl ?? string.Empty, // Use uploaded image URL or empty string
+                    Rating = request.Rating,
+                    Location = request.Location,
+                    Coordinates = request.Coordinates,
+                    Address = request.Address,
+                    OpeningHours = request.OpeningHours,
+                    EntryFee = request.EntryFee,
+                    Highlights = System.Text.Json.JsonSerializer.Serialize(request.Highlights),
+                    TravelTime = request.TravelTime,
+                    IsActive = request.IsActive,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                _context.TouristSpots.Add(touristSpot);
+                await _context.SaveChangesAsync();
+
+                var touristSpotDto = new TouristSpotDto
+                {
+                    Id = touristSpot.Id,
+                    Name = touristSpot.Name,
+                    Description = touristSpot.Description,
+                    ImageUrl = touristSpot.ImageUrl,
+                    Rating = touristSpot.Rating,
+                    Location = touristSpot.Location,
+                    Coordinates = touristSpot.Coordinates,
+                    Address = touristSpot.Address,
+                    OpeningHours = touristSpot.OpeningHours,
+                    EntryFee = touristSpot.EntryFee,
+                    Highlights = touristSpot.HighlightsList,
+                    TravelTime = touristSpot.TravelTime,
+                    IsActive = touristSpot.IsActive,
+                    ViewCount = touristSpot.ViewCount,
+                    CreatedAt = touristSpot.CreatedAt,
+                    UpdatedAt = touristSpot.UpdatedAt
+                };
+
+                return CreatedAtAction(nameof(GetTouristSpot), new { id = touristSpot.Id }, new ApiResponse<TouristSpotDto>
+                {
+                    Success = true,
+                    Data = touristSpotDto,
+                    Message = "Tourist spot created successfully" + (imageUrl != null ? " with image" : "")
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating tourist spot with image");
+                return StatusCode(500, new ApiResponse<TouristSpotDto>
+                {
+                    Success = false,
+                    Message = "An error occurred while creating the tourist spot",
+                    Errors = new List<string> { ex.Message }
+                });
+            }
+        }
+
         // PUT: api/touristspot/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTouristSpot(int id, [FromBody] CreateTouristSpotRequest request)
+        public async Task<IActionResult> UpdateTouristSpot(int id, [FromBody] UpdateTouristSpotRequest request)
         {
             try
             {
@@ -261,6 +352,119 @@ namespace Alisto.Api.Controllers
                     Success = true,
                     Data = touristSpotDto,
                     Message = "Tourist spot updated successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating tourist spot with ID: {TouristSpotId}", id);
+                return StatusCode(500, new ApiResponse<TouristSpotDto>
+                {
+                    Success = false,
+                    Message = "An error occurred while updating the tourist spot",
+                    Errors = new List<string> { ex.Message }
+                });
+            }
+        }
+
+        // PUT: api/touristspot/{id}/with-image
+        [HttpPut("{id}/with-image")]
+        public async Task<IActionResult> UpdateTouristSpotWithImage(int id, [FromForm] UpdateTouristSpotWithImageRequest request)
+        {
+            try
+            {
+                var touristSpot = await _context.TouristSpots.FindAsync(id);
+
+                if (touristSpot == null)
+                {
+                    return NotFound(new ApiResponse<TouristSpotDto>
+                    {
+                        Success = false,
+                        Message = "Tourist spot not found"
+                    });
+                }
+
+                string? imageUrl = null;
+
+                // Upload new image if provided
+                if (request.Image != null)
+                {
+                    try
+                    {
+                        imageUrl = await _fileUploadService.UploadFileAsync(request.Image, "tourist-spots");
+                        
+                        if (imageUrl == null)
+                        {
+                            _logger.LogWarning("Failed to upload image for tourist spot {TouristSpotId}", id);
+                            // Continue with update even if image upload fails
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error uploading image for tourist spot {TouristSpotId}", id);
+                        // Continue with update even if image upload fails
+                    }
+                }
+
+                // Update tourist spot properties
+                touristSpot.Name = request.Name;
+                touristSpot.Description = request.Description;
+                
+                // Update image URL only if new image was uploaded successfully
+                if (!string.IsNullOrEmpty(imageUrl))
+                {
+                    // Delete old image if it exists
+                    if (!string.IsNullOrEmpty(touristSpot.ImageUrl))
+                    {
+                        try
+                        {
+                            await _fileUploadService.DeleteFileAsync(touristSpot.ImageUrl);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogWarning(ex, "Failed to delete old image for tourist spot {TouristSpotId}", id);
+                        }
+                    }
+                    touristSpot.ImageUrl = imageUrl;
+                }
+                
+                touristSpot.Rating = request.Rating;
+                touristSpot.Location = request.Location;
+                touristSpot.Coordinates = request.Coordinates;
+                touristSpot.Address = request.Address;
+                touristSpot.OpeningHours = request.OpeningHours;
+                touristSpot.EntryFee = request.EntryFee;
+                touristSpot.Highlights = System.Text.Json.JsonSerializer.Serialize(request.Highlights);
+                touristSpot.TravelTime = request.TravelTime;
+                touristSpot.IsActive = request.IsActive;
+                touristSpot.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                var touristSpotDto = new TouristSpotDto
+                {
+                    Id = touristSpot.Id,
+                    Name = touristSpot.Name,
+                    Description = touristSpot.Description,
+                    ImageUrl = touristSpot.ImageUrl,
+                    Rating = touristSpot.Rating,
+                    Location = touristSpot.Location,
+                    Coordinates = touristSpot.Coordinates,
+                    Address = touristSpot.Address,
+                    OpeningHours = touristSpot.OpeningHours,
+                    EntryFee = touristSpot.EntryFee,
+                    Highlights = touristSpot.HighlightsList,
+                    TravelTime = touristSpot.TravelTime,
+                    IsActive = touristSpot.IsActive,
+                    ViewCount = touristSpot.ViewCount,
+                    CreatedAt = touristSpot.CreatedAt,
+                    UpdatedAt = touristSpot.UpdatedAt
+                };
+
+                return Ok(new ApiResponse<TouristSpotDto>
+                {
+                    Success = true,
+                    Data = touristSpotDto,
+                    Message = "Tourist spot updated successfully" + (imageUrl != null ? " with new image" : "")
                 });
             }
             catch (Exception ex)

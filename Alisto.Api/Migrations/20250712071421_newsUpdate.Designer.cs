@@ -3,6 +3,7 @@ using System;
 using Alisto.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Alisto.Api.Migrations
 {
     [DbContext(typeof(AlistoDbContext))]
-    partial class AlistoDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250712071421_newsUpdate")]
+    partial class newsUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -579,7 +582,7 @@ namespace Alisto.Api.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2025, 7, 12, 8, 59, 28, 438, DateTimeKind.Utc).AddTicks(5734),
+                            CreatedAt = new DateTime(2025, 7, 12, 7, 14, 20, 874, DateTimeKind.Utc).AddTicks(9487),
                             Department = "Emergency Response",
                             Description = "For all emergency situations",
                             IsActive = true,
@@ -588,12 +591,12 @@ namespace Alisto.Api.Migrations
                             PhoneNumber = "911",
                             SortOrder = 1,
                             Title = "Emergency Hotline",
-                            UpdatedAt = new DateTime(2025, 7, 12, 8, 59, 28, 438, DateTimeKind.Utc).AddTicks(5740)
+                            UpdatedAt = new DateTime(2025, 7, 12, 7, 14, 20, 874, DateTimeKind.Utc).AddTicks(9493)
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2025, 7, 12, 8, 59, 28, 438, DateTimeKind.Utc).AddTicks(8153),
+                            CreatedAt = new DateTime(2025, 7, 12, 7, 14, 20, 875, DateTimeKind.Utc).AddTicks(886),
                             Department = "Fire Department",
                             Description = "Fire emergencies and rescue operations",
                             IsActive = true,
@@ -602,12 +605,12 @@ namespace Alisto.Api.Migrations
                             PhoneNumber = "(077) 770-1234",
                             SortOrder = 2,
                             Title = "Fire Department",
-                            UpdatedAt = new DateTime(2025, 7, 12, 8, 59, 28, 438, DateTimeKind.Utc).AddTicks(8156)
+                            UpdatedAt = new DateTime(2025, 7, 12, 7, 14, 20, 875, DateTimeKind.Utc).AddTicks(886)
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2025, 7, 12, 8, 59, 28, 438, DateTimeKind.Utc).AddTicks(8162),
+                            CreatedAt = new DateTime(2025, 7, 12, 7, 14, 20, 875, DateTimeKind.Utc).AddTicks(890),
                             Department = "Police Department",
                             Description = "Crime reporting and police assistance",
                             IsActive = true,
@@ -616,12 +619,12 @@ namespace Alisto.Api.Migrations
                             PhoneNumber = "(077) 770-5678",
                             SortOrder = 3,
                             Title = "Police Station",
-                            UpdatedAt = new DateTime(2025, 7, 12, 8, 59, 28, 438, DateTimeKind.Utc).AddTicks(8163)
+                            UpdatedAt = new DateTime(2025, 7, 12, 7, 14, 20, 875, DateTimeKind.Utc).AddTicks(891)
                         },
                         new
                         {
                             Id = 4,
-                            CreatedAt = new DateTime(2025, 7, 12, 8, 59, 28, 438, DateTimeKind.Utc).AddTicks(8167),
+                            CreatedAt = new DateTime(2025, 7, 12, 7, 14, 20, 875, DateTimeKind.Utc).AddTicks(893),
                             Department = "City Hall",
                             Description = "General inquiries and information",
                             IsActive = true,
@@ -630,7 +633,7 @@ namespace Alisto.Api.Migrations
                             PhoneNumber = "(077) 770-9000",
                             SortOrder = 4,
                             Title = "City Hall Main",
-                            UpdatedAt = new DateTime(2025, 7, 12, 8, 59, 28, 438, DateTimeKind.Utc).AddTicks(8167)
+                            UpdatedAt = new DateTime(2025, 7, 12, 7, 14, 20, 875, DateTimeKind.Utc).AddTicks(894)
                         });
                 });
 
@@ -1355,46 +1358,46 @@ namespace Alisto.Api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "1719bf1a-1ceb-429f-bbba-341ae5a5d080",
-                            CreatedAt = new DateTime(2025, 7, 12, 8, 59, 28, 440, DateTimeKind.Utc).AddTicks(6934),
+                            Id = "db726ab0-2c0d-4750-94c6-2850031d5cec",
+                            CreatedAt = new DateTime(2025, 7, 12, 7, 14, 20, 876, DateTimeKind.Utc).AddTicks(2884),
                             DataType = "String",
                             Description = "Application name",
                             IsPublic = true,
                             Key = "APP_NAME",
-                            UpdatedAt = new DateTime(2025, 7, 12, 8, 59, 28, 440, DateTimeKind.Utc).AddTicks(6940),
+                            UpdatedAt = new DateTime(2025, 7, 12, 7, 14, 20, 876, DateTimeKind.Utc).AddTicks(2887),
                             Value = "Alisto"
                         },
                         new
                         {
-                            Id = "ddb6ab85-d70a-467f-813d-51d9dff61955",
-                            CreatedAt = new DateTime(2025, 7, 12, 8, 59, 28, 440, DateTimeKind.Utc).AddTicks(9667),
+                            Id = "e4446bdc-98d3-4a1f-9e45-99785756ce90",
+                            CreatedAt = new DateTime(2025, 7, 12, 7, 14, 20, 876, DateTimeKind.Utc).AddTicks(4159),
                             DataType = "String",
                             Description = "Application version",
                             IsPublic = true,
                             Key = "APP_VERSION",
-                            UpdatedAt = new DateTime(2025, 7, 12, 8, 59, 28, 440, DateTimeKind.Utc).AddTicks(9672),
+                            UpdatedAt = new DateTime(2025, 7, 12, 7, 14, 20, 876, DateTimeKind.Utc).AddTicks(4159),
                             Value = "1.0.0"
                         },
                         new
                         {
-                            Id = "0587786f-05b8-4d01-9ea5-dc87330a9bc3",
-                            CreatedAt = new DateTime(2025, 7, 12, 8, 59, 28, 440, DateTimeKind.Utc).AddTicks(9693),
+                            Id = "809cd448-4cde-4466-b007-91b7d7e06365",
+                            CreatedAt = new DateTime(2025, 7, 12, 7, 14, 20, 876, DateTimeKind.Utc).AddTicks(4177),
                             DataType = "Boolean",
                             Description = "Enable maintenance mode",
                             IsPublic = false,
                             Key = "MAINTENANCE_MODE",
-                            UpdatedAt = new DateTime(2025, 7, 12, 8, 59, 28, 440, DateTimeKind.Utc).AddTicks(9694),
+                            UpdatedAt = new DateTime(2025, 7, 12, 7, 14, 20, 876, DateTimeKind.Utc).AddTicks(4177),
                             Value = "false"
                         },
                         new
                         {
-                            Id = "25a01b24-c556-4296-9a03-8ec3b789b893",
-                            CreatedAt = new DateTime(2025, 7, 12, 8, 59, 28, 440, DateTimeKind.Utc).AddTicks(9709),
+                            Id = "8404dd69-28a9-48b1-8b24-fe1b394c7bed",
+                            CreatedAt = new DateTime(2025, 7, 12, 7, 14, 20, 876, DateTimeKind.Utc).AddTicks(4211),
                             DataType = "Number",
                             Description = "Maximum file upload size in MB",
                             IsPublic = false,
                             Key = "MAX_FILE_SIZE_MB",
-                            UpdatedAt = new DateTime(2025, 7, 12, 8, 59, 28, 440, DateTimeKind.Utc).AddTicks(9710),
+                            UpdatedAt = new DateTime(2025, 7, 12, 7, 14, 20, 876, DateTimeKind.Utc).AddTicks(4212),
                             Value = "10"
                         });
                 });
@@ -1457,6 +1460,7 @@ namespace Alisto.Api.Migrations
                         .HasColumnType("character varying(500)");
 
                     b.Property<string>("Coordinates")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
@@ -1468,6 +1472,7 @@ namespace Alisto.Api.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("EntryFee")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
@@ -1496,6 +1501,7 @@ namespace Alisto.Api.Migrations
                         .HasColumnType("character varying(200)");
 
                     b.Property<string>("OpeningHours")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
@@ -1503,6 +1509,7 @@ namespace Alisto.Api.Migrations
                         .HasColumnType("decimal(3,2)");
 
                     b.Property<string>("TravelTime")
+                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 

@@ -14,7 +14,17 @@ A comprehensive city management API backend built with ASP.NET Core, providing s
 - **Public Projects**: Infrastructure project tracking
 - **City Services**: Comprehensive service catalog
 
-## 📋 API Response Standards
+## 📋 Project Rules & Standards
+
+### Development Rules
+- **.NET Version Management**: Never upgrade or downgrade .NET SDK, runtime, or NuGet package versions without explicit approval
+- **API Response Standards**: All endpoints must use standardized `ApiResponse<T>` format
+- **Code Patterns**: Follow existing naming conventions and patterns in the codebase
+- **TypeScript Sync**: Keep TypeScript types in sync with C# models
+
+For complete project rules, see [PROJECT_RULES.md](./PROJECT_RULES.md) and [.cursorrules](./.cursorrules).
+
+### API Response Standards
 
 All API endpoints follow a standardized `ApiResponse<T>` format for consistency and predictability.
 

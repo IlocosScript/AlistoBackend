@@ -16,22 +16,19 @@ namespace Alisto.Api.Models
         [MaxLength(200)]
         public string Title { get; set; }
 
-        [Required]
         [MaxLength(500)]
-        public string Summary { get; set; }
+        public string? Summary { get; set; }
 
         [Required]
         public string FullContent { get; set; }
 
-        [Required]
         [MaxLength(500)]
-        public string ImageUrl { get; set; }
+        public string? ImageUrl { get; set; }
 
-        public DateTime PublishedDate { get; set; }
+        public DateTime? PublishedDate { get; set; }
 
-        [Required]
         [MaxLength(20)]
-        public string PublishedTime { get; set; }
+        public string? PublishedTime { get; set; }
 
         [Required]
         [MaxLength(200)]
@@ -50,8 +47,10 @@ namespace Alisto.Api.Models
         [Column(TypeName = "json")]
         public string Tags { get; set; } = "[]";
 
+        [Required]
         public bool IsFeatured { get; set; } = false;
 
+        [Required]
         public bool IsTrending { get; set; } = false;
 
         public int ViewCount { get; set; } = 0;

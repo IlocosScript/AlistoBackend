@@ -5,6 +5,7 @@ using Alisto.Api.Data;
 using Alisto.Api.Models;
 using Alisto.Api.DTOs;
 using Alisto.Api.Enums;
+using Alisto.Api.Services;
 
 namespace Alisto.Api.Controllers
 {
@@ -14,11 +15,13 @@ namespace Alisto.Api.Controllers
     {
         private readonly AlistoDbContext _context;
         private readonly ILogger<NewsController> _logger;
+        private readonly ILocalFileUploadService _fileUploadService;
 
-        public NewsController(AlistoDbContext context, ILogger<NewsController> logger)
+        public NewsController(AlistoDbContext context, ILogger<NewsController> logger, ILocalFileUploadService fileUploadService)
         {
             _context = context;
             _logger = logger;
+            _fileUploadService = fileUploadService;
         }
 
         // GET: api/news
@@ -49,14 +52,13 @@ namespace Alisto.Api.Controllers
                     query = query.Where(n => n.IsTrending == isTrending.Value);
                 }
 
-                // Only show published articles
-                query = query.Where(n => n.Status == ContentStatus.Published);
+                // Return all news articles regardless of status
 
                 var totalCount = await query.CountAsync();
                 var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
                 var news = await query
-                    .OrderByDescending(n => n.PublishedDate)
+                    .OrderByDescending(n => n.PublishedDate ?? DateTime.MinValue)
                     .Skip((page - 1) * pageSize)
                     .Take(pageSize)
                     .Select(n => new NewsArticleDto
@@ -74,7 +76,8 @@ namespace Alisto.Api.Controllers
                         Tags = n.TagsList,
                         IsFeatured = n.IsFeatured,
                         IsTrending = n.IsTrending,
-                        ViewCount = n.ViewCount
+                        ViewCount = n.ViewCount,
+                        Status = n.Status.ToString()
                     })
                     .ToListAsync();
 
@@ -110,7 +113,7 @@ namespace Alisto.Api.Controllers
             try
             {
                 var newsArticle = await _context.NewsArticles
-                    .FirstOrDefaultAsync(n => n.Id == id && n.Status == ContentStatus.Published);
+                    .FirstOrDefaultAsync(n => n.Id == id);
 
                 if (newsArticle == null)
                 {
@@ -141,7 +144,8 @@ namespace Alisto.Api.Controllers
                     Tags = newsArticle.TagsList,
                     IsFeatured = newsArticle.IsFeatured,
                     IsTrending = newsArticle.IsTrending,
-                    ViewCount = newsArticle.ViewCount
+                    ViewCount = newsArticle.ViewCount,
+                    Status = newsArticle.Status.ToString()
                 };
 
                 return Ok(new ApiResponse<NewsArticleDto>
@@ -208,7 +212,8 @@ namespace Alisto.Api.Controllers
                     Tags = newsArticle.TagsList,
                     IsFeatured = newsArticle.IsFeatured,
                     IsTrending = newsArticle.IsTrending,
-                    ViewCount = newsArticle.ViewCount
+                    ViewCount = newsArticle.ViewCount,
+                    Status = newsArticle.Status.ToString()
                 };
 
                 return CreatedAtAction(nameof(GetNewsArticle), new { id = newsArticle.Id }, new ApiResponse<NewsArticleDto>
@@ -230,9 +235,119 @@ namespace Alisto.Api.Controllers
             }
         }
 
+        // POST: api/news/with-image
+        [HttpPost("with-image")]
+        public async Task<IActionResult> CreateNewsArticleWithImage([FromForm] CreateNewsWithImageRequest request)
+        {
+            try
+            {
+                string? imageUrl = null;
+
+                // Upload image to local directory if provided
+                if (request.Image != null)
+                {
+                    try
+                    {
+                        // Get local file upload service from DI
+                        var localFileService = HttpContext.RequestServices.GetService<Alisto.Api.Services.ILocalFileUploadService>();
+                        
+                        if (localFileService != null)
+                        {
+                            imageUrl = await localFileService.UploadFileAsync(request.Image, "news-images");
+                            
+                            if (!string.IsNullOrEmpty(imageUrl))
+                            {
+                                _logger.LogInformation("Image uploaded successfully to local storage. URL: {Url}", imageUrl);
+                            }
+                            else
+                            {
+                                _logger.LogWarning("Failed to upload image to local storage for news article: {Title}", request.Title);
+                            }
+                        }
+                        else
+                        {
+                            _logger.LogWarning("Local file upload service not available.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error uploading image to local storage for news article: {Title}. Continuing without image.", request.Title);
+                        // Continue without image - don't fail the entire request
+                    }
+                }
+
+                // Create news article (with or without image)
+                var newsArticle = new NewsArticle
+                {
+                    Title = request.Title,
+                    Summary = request.Summary,
+                    FullContent = request.FullContent,
+                    ImageUrl = imageUrl, // Will be null if upload failed
+                    PublishedDate = request.PublishedDate,
+                    PublishedTime = request.PublishedTime,
+                    Location = request.Location,
+                    ExpectedAttendees = request.ExpectedAttendees,
+                    Category = request.Category,
+                    Author = request.Author,
+                    Tags = request.Tags != null ? System.Text.Json.JsonSerializer.Serialize(request.Tags) : "[]",
+                    IsFeatured = request.IsFeatured,
+                    IsTrending = request.IsTrending,
+                    Status = ContentStatus.Draft,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                _context.NewsArticles.Add(newsArticle);
+                await _context.SaveChangesAsync();
+
+                var newsDto = new NewsArticleDto
+                {
+                    Id = newsArticle.Id,
+                    Title = newsArticle.Title,
+                    Summary = newsArticle.Summary,
+                    FullContent = newsArticle.FullContent,
+                    ImageUrl = newsArticle.ImageUrl,
+                    PublishedDate = newsArticle.PublishedDate,
+                    PublishedTime = newsArticle.PublishedTime,
+                    Location = newsArticle.Location,
+                    ExpectedAttendees = newsArticle.ExpectedAttendees,
+                    Category = newsArticle.Category.ToString(),
+                    Author = newsArticle.Author,
+                    Tags = newsArticle.TagsList,
+                    IsFeatured = newsArticle.IsFeatured,
+                    IsTrending = newsArticle.IsTrending,
+                    ViewCount = newsArticle.ViewCount,
+                    Status = newsArticle.Status.ToString()
+                };
+
+                var message = imageUrl != null 
+                    ? "News article with image created successfully (uploaded to local storage)" 
+                    : "News article created successfully (image upload failed or not provided)";
+
+                return CreatedAtAction(nameof(GetNewsArticle), new { id = newsArticle.Id }, new ApiResponse<NewsArticleDto>
+                {
+                    Success = true,
+                    Data = newsDto,
+                    Message = message
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating news article with image");
+                return StatusCode(500, new ApiResponse<NewsArticleDto>
+                {
+                    Success = false,
+                    Message = "An error occurred while creating the news article",
+                    Errors = new List<string> { ex.Message }
+                });
+            }
+        }
+
+
+
         // PUT: api/news/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateNewsArticle(int id, [FromBody] CreateNewsRequest request)
+        public async Task<IActionResult> UpdateNewsArticle(int id, [FromBody] UpdateNewsRequest request)
         {
             try
             {
@@ -281,7 +396,8 @@ namespace Alisto.Api.Controllers
                     Tags = newsArticle.TagsList,
                     IsFeatured = newsArticle.IsFeatured,
                     IsTrending = newsArticle.IsTrending,
-                    ViewCount = newsArticle.ViewCount
+                    ViewCount = newsArticle.ViewCount,
+                    Status = newsArticle.Status.ToString()
                 };
 
                 return Ok(new ApiResponse<NewsArticleDto>
@@ -289,6 +405,120 @@ namespace Alisto.Api.Controllers
                     Success = true,
                     Data = newsDto,
                     Message = "News article updated successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating news article with ID: {NewsId}", id);
+                return StatusCode(500, new ApiResponse<NewsArticleDto>
+                {
+                    Success = false,
+                    Message = "An error occurred while updating the news article",
+                    Errors = new List<string> { ex.Message }
+                });
+            }
+        }
+
+        // PUT: api/news/{id}/with-image
+        [HttpPut("{id}/with-image")]
+        public async Task<IActionResult> UpdateNewsArticleWithImage(int id, [FromForm] UpdateNewsWithImageRequest request)
+        {
+            try
+            {
+                var newsArticle = await _context.NewsArticles.FindAsync(id);
+
+                if (newsArticle == null)
+                {
+                    return NotFound(new ApiResponse<NewsArticleDto>
+                    {
+                        Success = false,
+                        Message = "News article not found"
+                    });
+                }
+
+                string? imageUrl = null;
+
+                // Upload new image if provided
+                if (request.Image != null)
+                {
+                    try
+                    {
+                        imageUrl = await _fileUploadService.UploadFileAsync(request.Image, "news");
+                        
+                        if (imageUrl == null)
+                        {
+                            _logger.LogWarning("Failed to upload image for news article {NewsId}", id);
+                            // Continue with update even if image upload fails
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error uploading image for news article {NewsId}", id);
+                        // Continue with update even if image upload fails
+                    }
+                }
+
+                // Update news article properties
+                newsArticle.Title = request.Title;
+                newsArticle.Summary = request.Summary;
+                newsArticle.FullContent = request.FullContent;
+                
+                // Update image URL only if new image was uploaded successfully
+                if (!string.IsNullOrEmpty(imageUrl))
+                {
+                    // Delete old image if it exists
+                    if (!string.IsNullOrEmpty(newsArticle.ImageUrl))
+                    {
+                        try
+                        {
+                            await _fileUploadService.DeleteFileAsync(newsArticle.ImageUrl);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogWarning(ex, "Failed to delete old image for news article {NewsId}", id);
+                        }
+                    }
+                    newsArticle.ImageUrl = imageUrl;
+                }
+                
+                newsArticle.PublishedDate = request.PublishedDate;
+                newsArticle.PublishedTime = request.PublishedTime;
+                newsArticle.Location = request.Location;
+                newsArticle.ExpectedAttendees = request.ExpectedAttendees;
+                newsArticle.Category = request.Category;
+                newsArticle.Author = request.Author;
+                newsArticle.Tags = request.Tags != null ? System.Text.Json.JsonSerializer.Serialize(request.Tags) : "[]";
+                newsArticle.IsFeatured = request.IsFeatured;
+                newsArticle.IsTrending = request.IsTrending;
+                newsArticle.UpdatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                var newsDto = new NewsArticleDto
+                {
+                    Id = newsArticle.Id,
+                    Title = newsArticle.Title,
+                    Summary = newsArticle.Summary,
+                    FullContent = newsArticle.FullContent,
+                    ImageUrl = newsArticle.ImageUrl,
+                    PublishedDate = newsArticle.PublishedDate,
+                    PublishedTime = newsArticle.PublishedTime,
+                    Location = newsArticle.Location,
+                    ExpectedAttendees = newsArticle.ExpectedAttendees,
+                    Category = newsArticle.Category.ToString(),
+                    Author = newsArticle.Author,
+                    Tags = newsArticle.TagsList,
+                    IsFeatured = newsArticle.IsFeatured,
+                    IsTrending = newsArticle.IsTrending,
+                    ViewCount = newsArticle.ViewCount,
+                    Status = newsArticle.Status.ToString()
+                };
+
+                return Ok(new ApiResponse<NewsArticleDto>
+                {
+                    Success = true,
+                    Data = newsDto,
+                    Message = "News article updated successfully" + (imageUrl != null ? " with new image" : "")
                 });
             }
             catch (Exception ex)
@@ -389,7 +619,7 @@ namespace Alisto.Api.Controllers
             {
                 var featuredNews = await _context.NewsArticles
                     .Where(n => n.IsFeatured && n.Status == ContentStatus.Published)
-                    .OrderByDescending(n => n.PublishedDate)
+                    .OrderByDescending(n => n.PublishedDate ?? DateTime.MinValue)
                     .Take(5)
                     .Select(n => new NewsArticleDto
                     {
@@ -406,7 +636,8 @@ namespace Alisto.Api.Controllers
                         Tags = n.TagsList,
                         IsFeatured = n.IsFeatured,
                         IsTrending = n.IsTrending,
-                        ViewCount = n.ViewCount
+                        ViewCount = n.ViewCount,
+                        Status = n.Status.ToString()
                     })
                     .ToListAsync();
 
@@ -438,7 +669,7 @@ namespace Alisto.Api.Controllers
                 var trendingNews = await _context.NewsArticles
                     .Where(n => n.IsTrending && n.Status == ContentStatus.Published)
                     .OrderByDescending(n => n.ViewCount)
-                    .ThenByDescending(n => n.PublishedDate)
+                    .ThenByDescending(n => n.PublishedDate ?? DateTime.MinValue)
                     .Take(10)
                     .Select(n => new NewsArticleDto
                     {
@@ -455,7 +686,8 @@ namespace Alisto.Api.Controllers
                         Tags = n.TagsList,
                         IsFeatured = n.IsFeatured,
                         IsTrending = n.IsTrending,
-                        ViewCount = n.ViewCount
+                        ViewCount = n.ViewCount,
+                        Status = n.Status.ToString()
                     })
                     .ToListAsync();
 

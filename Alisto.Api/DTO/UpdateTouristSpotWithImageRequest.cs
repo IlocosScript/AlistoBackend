@@ -1,8 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace Alisto.Api.DTOs
 {
-    public class CreateTouristSpotRequest
+    public class UpdateTouristSpotWithImageRequest
     {
         [Required]
         [MaxLength(200)]
@@ -10,10 +11,6 @@ namespace Alisto.Api.DTOs
 
         [Required]
         public string Description { get; set; }
-
-        [Required]
-        [MaxLength(500)]
-        public string ImageUrl { get; set; }
 
         public decimal Rating { get; set; } = 5.0m;
 
@@ -40,5 +37,8 @@ namespace Alisto.Api.DTOs
         public string? TravelTime { get; set; }
 
         public bool IsActive { get; set; } = true;
+
+        // Optional image upload - if provided, it will replace the existing image
+        public IFormFile? Image { get; set; }
     }
 } 

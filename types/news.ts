@@ -8,18 +8,18 @@ import { ApiResponse, PaginatedResponse, NewsCategory, ContentStatus } from './c
 
 export interface CreateNewsRequest {
   title: string;
-  summary: string;
+  summary?: string;
   fullContent: string;
-  imageUrl: string;
-  publishedDate: string; // ISO date string
-  publishedTime: string;
+  imageUrl?: string;
+  publishedDate?: string; // ISO date string
+  publishedTime?: string;
   location: string;
   expectedAttendees?: string;
   category: NewsCategory;
   author: string;
   tags?: string[];
-  isFeatured?: boolean;
-  isTrending?: boolean;
+  isFeatured: boolean;
+  isTrending: boolean;
 }
 
 // ============================================================================
@@ -29,11 +29,11 @@ export interface CreateNewsRequest {
 export interface NewsArticleDto {
   id: number;
   title: string;
-  summary: string;
+  summary?: string;
   fullContent?: string; // Only included in detailed view
-  imageUrl: string;
-  publishedDate: string; // ISO date string
-  publishedTime: string;
+  imageUrl?: string;
+  publishedDate?: string; // ISO date string
+  publishedTime?: string;
   location: string;
   expectedAttendees?: string;
   category: string; // NewsCategory as string
@@ -42,6 +42,7 @@ export interface NewsArticleDto {
   isFeatured: boolean;
   isTrending: boolean;
   viewCount: number;
+  status: string; // ContentStatus as string
 }
 
 // ============================================================================

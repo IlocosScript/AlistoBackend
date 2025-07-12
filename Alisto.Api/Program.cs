@@ -17,19 +17,28 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<Alisto.Api.Data.AlistoDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DB") ) .ConfigureWarnings(warnings =>
                     warnings.Ignore(RelationalEventId.PendingModelChangesWarning)));
- string JwtIssuer=builder.Configuration["JwtSettings:Issuer"]??""; // Replace with your actual issuer
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.Authority = JwtIssuer;//"https://settling-ant-32.clerk.accounts.dev"; // or https://api.clerk.dev if using Clerk-hosted
-        options.TokenValidationParameters = new TokenValidationParameters
+// JWT Authentication Configuration
+var jwtIssuer = builder.Configuration["JwtSettings:Issuer"];
+if (!string.IsNullOrEmpty(jwtIssuer))
+{
+    builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
         {
-            ValidateIssuer = true,
-          //  ValidIssuer ="https://settling-ant-32.clerk.accounts.dev",// builder.Configuration["JwtSettings:Issuer"], // Set your issuer here
-            ValidateAudience = false, // or set to true if you want to validate against a specific audience
-            ValidateLifetime = true
-        };
-    });
+            options.Authority = jwtIssuer;
+            options.RequireHttpsMetadata = false; // Allow HTTP for development
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = false,
+                ValidateLifetime = true
+            };
+        });
+}
+else
+{
+    // If no JWT issuer is configured, add a basic authentication scheme
+    builder.Services.AddAuthentication();
+}
 
 builder.Services.AddCors(options =>
             {
@@ -43,6 +52,10 @@ builder.Services.AddCors(options =>
                 });
             });
 builder.Services.AddAuthorization();
+
+// Register Local File Upload service
+builder.Services.AddScoped<Alisto.Api.Services.ILocalFileUploadService, Alisto.Api.Services.LocalFileUploadService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -56,6 +69,17 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.UseCors("AllowDevOrigin");
 app.UseHttpsRedirection();
+
+// Serve static files from wwwroot
+app.UseStaticFiles();
+
+// Serve static files from uploads folder
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "uploads")),
+    RequestPath = "/uploads"
+});
 
 app.UseAuthorization();
 
