@@ -30,6 +30,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true
         };
     });
+
+builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowDevOrigin", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyMethod()
+                           .AllowAnyHeader()
+                           .WithExposedHeaders("Content-Disposition", "Content-Length", "Content-Type")
+                           .SetIsOriginAllowed(origin => true); // Allow any origin for development
+                });
+            });
 builder.Services.AddAuthorization();
 var app = builder.Build();
 
@@ -42,7 +54,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseSwagger();
 app.UseSwaggerUI();
-
+app.UseCors("AllowDevOrigin");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
