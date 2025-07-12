@@ -20,4 +20,8 @@ RUN dotnet publish "Alisto.Api.csproj" -c Release -o /app/publish /p:UseAppHost=
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+# Create uploads directory and set permissions
+RUN mkdir -p /app/uploads && chmod 755 /app/uploads
+
 ENTRYPOINT ["dotnet", "Alisto.Api.dll"] 
