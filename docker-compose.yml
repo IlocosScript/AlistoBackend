@@ -10,11 +10,11 @@ services:
 
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_URLS=http://+:7000
       - ConnectionStrings__DB=${DATABASE_URL}
       - JwtSettings__Issuer=${JWT_ISSUER}
     ports:
-      - "7000:8080"
+      - "7000:7000"
     volumes:
       - ./Alisto.Api:/src
       - /src/bin
