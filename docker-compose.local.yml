@@ -7,14 +7,17 @@ services:
       dockerfile: Dockerfile
       target: build
     container_name: alisto-api-local
-    env_file:
-      - .env
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=http://+:7000
+      - ASPNETCORE_URLS=http://+:5070
       - ConnectionStrings__DB=${DATABASE_URL}
       - JwtSettings__Issuer=${JWT_ISSUER}
+    networks:
+      - alisto-api-local
     ports:
-      - "7000:7000"
-  
-    restart: unless-stopped 
+      - "5070:5070"
+    restart: unless-stopped
+
+networks:
+  alisto-api-local:
+    driver: bridge 

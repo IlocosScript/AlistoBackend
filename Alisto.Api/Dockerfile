@@ -1,7 +1,7 @@
 # Stage 1: Runtime environment (minimal image for running the app)
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
-EXPOSE 7000
+EXPOSE 5070
 
 # Stage 2: Build environment (includes SDK and build tools)
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
