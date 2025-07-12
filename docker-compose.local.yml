@@ -11,6 +11,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:5070
       - ConnectionStrings__DB=${DATABASE_URL}
+      - ASPNETCORE_HTTP_PORTS=5070
       - JwtSettings__Issuer=${JWT_ISSUER}
       - FileUpload__LocalPath=${FILE_UPLOAD_LOCAL_PATH:-uploads}
       - FileUpload__BaseUrl=${FILE_UPLOAD_BASE_URL:-/uploads}
