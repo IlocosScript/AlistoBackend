@@ -6,6 +6,9 @@ namespace Alisto.Api.DTOs
     public class CreateAppointmentRequest
     {
         [Required]
+        public string UserId { get; set; }
+
+        [Required]
         public int ServiceId { get; set; }
 
         [Required]
@@ -13,6 +16,8 @@ namespace Alisto.Api.DTOs
 
         [Required]
         public string AppointmentTime { get; set; }
+
+        public string? Notes { get; set; }
 
         [Required]
         public string ApplicantFirstName { get; set; }
@@ -30,6 +35,6 @@ namespace Alisto.Api.DTOs
         [Required]
         public string ApplicantAddress { get; set; }
 
-        public object? ServiceSpecificData { get; set; }
+        public string? ServiceSpecificData { get; set; }
     }
 }

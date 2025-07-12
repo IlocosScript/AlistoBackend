@@ -1,15 +1,18 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Alisto.Api.Enums;
 
 namespace Alisto.Api.DTOs
 {
     public class CreateIssueReportRequest
     {
-        [Required]
-        public string Category { get; set; }
+        public string? UserId { get; set; }
 
         [Required]
-        public string UrgencyLevel { get; set; }
+        public IssueCategory Category { get; set; }
+
+        [Required]
+        public UrgencyLevel UrgencyLevel { get; set; }
 
         [Required]
         public string Title { get; set; }
@@ -23,6 +26,11 @@ namespace Alisto.Api.DTOs
         public string? Coordinates { get; set; }
 
         public string? ContactInfo { get; set; }
+
+        [Required]
+        public Priority Priority { get; set; }
+
+        public bool PubliclyVisible { get; set; } = true;
 
         public List<string> PhotoIds { get; set; } = new List<string>();
     }

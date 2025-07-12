@@ -24,7 +24,6 @@ namespace Alisto.Api.Data
 
         // User Management
         public DbSet<User> Users { get; set; }
-        public DbSet<UserSession> UserSessions { get; set; }
 
         // News and Announcements
         public DbSet<NewsArticle> NewsArticles { get; set; }
@@ -157,12 +156,7 @@ namespace Alisto.Api.Data
             // RELATIONSHIPS AND CONSTRAINTS
             // ===================================================================
 
-            // User Sessions
-            modelBuilder.Entity<UserSession>()
-                .HasOne(us => us.User)
-                .WithMany(u => u.Sessions)
-                .HasForeignKey(us => us.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+
 
             // Appointments
             modelBuilder.Entity<Appointment>()

@@ -9,6 +9,13 @@ namespace Alisto.Api.Models
         [Key]
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
+        // Third-party auth provider mapping
+        [MaxLength(255)]
+        public string? ExternalId { get; set; } // ID from third-party auth provider
+
+        [MaxLength(100)]
+        public string? AuthProvider { get; set; } // e.g., "Google", "Microsoft", "Custom"
+
         [Required]
         [EmailAddress]
         [MaxLength(255)]
@@ -56,6 +63,5 @@ namespace Alisto.Api.Models
         // Navigation properties
         public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
         public virtual ICollection<IssueReport> IssueReports { get; set; } = new List<IssueReport>();
-        public virtual ICollection<UserSession> Sessions { get; set; } = new List<UserSession>();
     }
 }
