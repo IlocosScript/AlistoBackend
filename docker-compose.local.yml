@@ -5,7 +5,7 @@ services:
     build:
       context: ./Alisto.Api
       dockerfile: Dockerfile
-      target: build
+      target: final
     container_name: alisto-api-local
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
