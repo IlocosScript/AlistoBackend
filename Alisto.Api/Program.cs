@@ -41,16 +41,16 @@ else
 }
 
 builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowDevOrigin", builder =>
-                {
-                    builder.AllowAnyOrigin()
-                           .AllowAnyMethod()
-                           .AllowAnyHeader()
-                           .WithExposedHeaders("Content-Disposition", "Content-Length", "Content-Type")
-                           .SetIsOriginAllowed(origin => true); // Allow any origin for development
-                });
-            });
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader()
+               .WithExposedHeaders("Content-Disposition", "Content-Length", "Content-Type", "X-Total-Count", "X-Total-Pages", "X-Current-Page")
+               .SetIsOriginAllowed(origin => true); // Allow any origin
+    });
+});
 builder.Services.AddAuthorization();
 
 // Register Local File Upload service
@@ -67,7 +67,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseSwagger();
 app.UseSwaggerUI();
-app.UseCors("AllowDevOrigin");
+app.UseCors("AllowAll");
 app.UseHttpsRedirection();
 
 // Serve static files from wwwroot
