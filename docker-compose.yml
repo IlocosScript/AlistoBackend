@@ -15,8 +15,5 @@ services:
       - JwtSettings__Issuer=${JWT_ISSUER}
     ports:
       - "7000:7000"
-    volumes:
-      - ./Alisto.Api:/src
-      - /src/bin
-      - /src/obj
+
     restart: unless-stopped 
