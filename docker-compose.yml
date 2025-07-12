@@ -5,12 +5,19 @@ services:
     build:
       context: ./Alisto.Api
       dockerfile: Dockerfile
-    container_name: alisto-api
+      target: build
+    container_name: alisto-api-local
+    env_file:
+      - .env
     environment:
-      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
       - ConnectionStrings__DB=${DATABASE_URL}
       - JwtSettings__Issuer=${JWT_ISSUER}
     ports:
-      - "8080:8080"
+      - "7000:8080"
+    volumes:
+      - ./Alisto.Api:/src
+      - /src/bin
+      - /src/obj
     restart: unless-stopped 
