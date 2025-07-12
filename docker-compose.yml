@@ -7,8 +7,7 @@ services:
       dockerfile: Dockerfile
       target: build
     container_name: alisto-api-local
-    env_file:
-      - .env
+
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
