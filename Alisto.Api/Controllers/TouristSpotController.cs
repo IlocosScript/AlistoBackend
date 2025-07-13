@@ -88,7 +88,7 @@ namespace Alisto.Api.Controllers
 
         // GET: api/touristspot/{id}
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetTouristSpot(string id)
+        public async Task<IActionResult> GetTouristSpot(int id)
         {
             try
             {
