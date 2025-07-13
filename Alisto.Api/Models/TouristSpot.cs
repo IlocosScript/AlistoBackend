@@ -18,9 +18,8 @@ namespace Alisto.Api.Models
         [Required]
         public string Description { get; set; }
 
-        [Required]
         [MaxLength(500)]
-        public string ImageUrl { get; set; }
+        public string ImageUrl { get; set; } = string.Empty;
 
         [Column(TypeName = "decimal(3,2)")]
         public decimal Rating { get; set; } = 5.0m;
