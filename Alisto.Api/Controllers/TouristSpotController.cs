@@ -57,7 +57,8 @@ namespace Alisto.Api.Controllers
                         Location = t.Location,
                         TravelTime = t.TravelTime,
                         ViewCount = t.ViewCount,
-                        Highlights = t.HighlightsList
+                        Highlights = t.HighlightsList,
+                        IsActive = t.IsActive
                     })
                     .ToListAsync();
 
@@ -117,7 +118,8 @@ namespace Alisto.Api.Controllers
                     Location = touristSpot.Location,
                     TravelTime = touristSpot.TravelTime,
                     ViewCount = touristSpot.ViewCount,
-                    Highlights = touristSpot.HighlightsList
+                    Highlights = touristSpot.HighlightsList,
+                    IsActive = touristSpot.IsActive
                 };
 
                 return Ok(new ApiResponse<TouristSpotDto>
