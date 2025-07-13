@@ -590,6 +590,9 @@ namespace Alisto.Api.Controllers
 
                 newsArticle.Status = ContentStatus.Published;
                 newsArticle.UpdatedAt = DateTime.UtcNow;
+                newsArticle.PublishedDate = DateTime.UtcNow;
+                newsArticle.PublishedTime = DateTime.UtcNow.ToString("HH:mm");
+                
 
                 await _context.SaveChangesAsync();
 
@@ -606,6 +609,48 @@ namespace Alisto.Api.Controllers
                 {
                     Success = false,
                     Message = "An error occurred while publishing the news article",
+                    Errors = new List<string> { ex.Message }
+                });
+            }
+        }
+
+        // PATCH: api/news/{id}/unpublish
+        [HttpPatch("{id}/unpublish")]
+        public async Task<IActionResult> UnpublishNewsArticle(int id)
+        {
+            try
+            {
+                var newsArticle = await _context.NewsArticles.FindAsync(id);
+
+                if (newsArticle == null)
+                {
+                    return NotFound(new ApiResponse<object>
+                    {
+                        Success = false,
+                        Message = "News article not found"
+                    });
+                }
+
+                newsArticle.Status = ContentStatus.Draft;
+                newsArticle.UpdatedAt = DateTime.UtcNow;
+                newsArticle.PublishedDate = null;
+                newsArticle.PublishedTime = null;
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new ApiResponse<object>
+                {
+                    Success = true,
+                    Message = "News article unpublished successfully"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error unpublishing news article with ID: {NewsId}", id);
+                return StatusCode(500, new ApiResponse<object>
+                {
+                    Success = false,
+                    Message = "An error occurred while unpublishing the news article",
                     Errors = new List<string> { ex.Message }
                 });
             }
