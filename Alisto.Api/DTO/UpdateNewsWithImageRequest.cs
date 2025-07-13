@@ -16,10 +16,6 @@ namespace Alisto.Api.DTOs
         [Required]
         public string FullContent { get; set; }
 
-        public DateTime? PublishedDate { get; set; }
-
-        public string? PublishedTime { get; set; }
-
         [Required]
         public string Location { get; set; }
 

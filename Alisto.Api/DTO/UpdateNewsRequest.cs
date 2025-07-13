@@ -18,10 +18,6 @@ namespace Alisto.Api.DTOs
 
         public string? ImageUrl { get; set; }
 
-        public DateTime? PublishedDate { get; set; }
-
-        public string? PublishedTime { get; set; }
-
         [Required]
         public string Location { get; set; }
 

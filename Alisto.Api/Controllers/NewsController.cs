@@ -481,8 +481,6 @@ namespace Alisto.Api.Controllers
                     newsArticle.ImageUrl = imageUrl;
                 }
                 
-                newsArticle.PublishedDate = request.PublishedDate;
-                newsArticle.PublishedTime = request.PublishedTime;
                 newsArticle.Location = request.Location;
                 newsArticle.ExpectedAttendees = request.ExpectedAttendees;
                 newsArticle.Category = request.Category;
